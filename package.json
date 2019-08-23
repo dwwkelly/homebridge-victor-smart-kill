@@ -1,0 +1,25 @@
+{
+  "name": "homebridge-victor-smart-kill",
+  "version": "0.1.0",
+  "description": "Homebridge Plugin for Victor Smart Kill Mousetraps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dwwkelly/homebridge-victor-smart-kill.git"
+  },
+  "keywords": [
+    "homebridge",
+    "iot",
+    "victor-smart-kill",
+    "mousetrap"
+  ],
+  "author": "Devin Kelly <dwwkelly@fastmail.fm>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dwwkelly/homebridge-victor-smart-kill/issues"
+  },
+  "homepage": "https://github.com/dwwkelly/homebridge-victor-smart-kill#readme"
+}
