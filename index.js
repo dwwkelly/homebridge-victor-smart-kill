@@ -13,7 +13,7 @@ module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
   UUIDGen = homebridge.hap.uuid;
-  
+
   // For platform plugin to be considered as dynamic platform plugin,
   homebridge.registerPlatform("homebridge-victor-smart-kill", "VictorSmartKill", VKS_Platform, true);
 }
@@ -32,12 +32,17 @@ function VKS_Platform(log, config, api) {
   this.token = null;
   this.api = api;
 
-  setInterval(function(obj) {return vks.check_traps(obj.username, 
-                                                    obj.password, 
-                                                    obj.add_traps_callback, 
+  vks.check_traps(this.username,
+                  this.password,
+                  this.add_traps_callback,
+                  this);
+
+  setInterval(function(obj) {return vks.check_traps(obj.username,
+                                                    obj.password,
+                                                    obj.add_traps_callback,
                                                     obj);
                             },
-              this.interval, 
+              this.interval,
               this);
 }
 
@@ -49,7 +54,7 @@ VKS_Platform.prototype.configureAccessory = function(accessory) {
   var platform = this;
 
   // Set the accessory to reachable if plugin can currently process the accessory,
-  // otherwise set to false and update the reachability later by invoking 
+  // otherwise set to false and update the reachability later by invoking
   // accessory.updateReachability()
   accessory.reachable = true;
 
@@ -97,7 +102,7 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
               this.log("Found accessory " + displayName);
               found_accessory = true;
 
-              if (kills_present > 0) 
+              if (kills_present > 0)
               {
                 accessory.getService(Service.MotionSensor)
                          .getCharacteristic(Characteristic.MotionDetected)
