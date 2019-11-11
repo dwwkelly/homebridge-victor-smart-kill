@@ -50,7 +50,7 @@ function VKS_Platform(log, config, api) {
 // Developer can configure accessory at here (like setup event handler).
 // Update current value.
 VKS_Platform.prototype.configureAccessory = function(accessory) {
-  this.log(accessory.displayName, "Configure Accessory");
+  this.log.debug(accessory.displayName, "Configure Accessory");
   var platform = this;
 
   // Set the accessory to reachable if plugin can currently process the accessory,
@@ -67,18 +67,17 @@ VKS_Platform.prototype.configureAccessory = function(accessory) {
     accessory.getService(Service.MotionSensor)
         .getCharacteristic(Characteristic.MotionDetected)
         .on('set', function(value, callback) {
-            console.log(accessory.displayName, "Trap -> " + value);
             callback();
         });
   }
 
-  this.log("configureAccessory");
+  this.log.debug("configureAccessory");
   this.accessories.push(accessory);
 }
 
 VKS_Platform.prototype.add_traps_callback = function(error, response, body)
 {
-  this.log("Add Traps Callback");
+  this.log.debug("Add Traps Callback");
   var uuid;
 
   if (!error && response.statusCode == 200) {
@@ -88,18 +87,15 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
       var displayName = obj['name'];
       var kills_present = obj['trapstatistics']['kills_present'];
       uuid = UUIDGen.generate(displayName);
-      this.log(displayName);
       var found_accessory = false;
 
-      this.log("kills present = " + kills_present);
 
       for (var kk in this.accessories)
       {
           var accessory = this.accessories[kk];
-          this.log("accessory name = " + accessory.displayName)
           if (accessory.displayName == displayName)
           {
-              this.log("Found accessory " + displayName);
+              this.log.debug("Found accessory " + displayName);
               found_accessory = true;
 
               if (kills_present > 0)
@@ -107,21 +103,21 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
                 accessory.getService(Service.MotionSensor)
                          .getCharacteristic(Characteristic.MotionDetected)
                          .setValue(true);
-                this.log("alert motion sensor!!");
+                this.log(displayName + ": kills present = " + kills_present);
               }
               else if (kills_present <= 0)
               {
                 accessory.getService(Service.MotionSensor)
                          .getCharacteristic(Characteristic.MotionDetected)
                          .setValue(false);
-                this.log("no kills present");
+                this.log(displayName + ": no kills present");
               }
           }
       }
 
       if (!found_accessory)
       {
-        this.log("Adding accessory ", displayName, " to list");
+        this.log.debug("Adding accessory ", displayName, " to list");
 
         uuid = UUIDGen.generate(displayName);
         var newAccessory = new Accessory(displayName, uuid);
@@ -148,6 +144,6 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
     }
   }
   else{
-      this.log(response);
+      this.log.error(response);
   }
 }
