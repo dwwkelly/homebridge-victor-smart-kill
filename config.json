@@ -17,7 +17,7 @@
 
   "platforms": [
     {
-      "platform" : "victor-smart-kill",
+      "platform" : "VictorSmartKill",
       "name" : "Mousetrap",
       "username": "my_username",
       "password": "my_password"
