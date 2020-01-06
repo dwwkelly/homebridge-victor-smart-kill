@@ -89,7 +89,6 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
       uuid = UUIDGen.generate(displayName);
       var found_accessory = false;
 
-
       for (var kk in this.accessories)
       {
           var accessory = this.accessories[kk];
@@ -97,24 +96,11 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
           {
               this.log.debug("Found accessory " + displayName);
               found_accessory = true;
-
-              if (kills_present > 0)
-              {
-                accessory.getService(Service.MotionSensor)
-                         .getCharacteristic(Characteristic.MotionDetected)
-                         .setValue(true);
-                this.log(displayName + ": kills present = " + kills_present);
-              }
-              else if (kills_present <= 0)
-              {
-                accessory.getService(Service.MotionSensor)
-                         .getCharacteristic(Characteristic.MotionDetected)
-                         .setValue(false);
-                this.log(displayName + ": no kills present");
-              }
-          }
+              break;
+         }
       }
 
+      // can't find this accessory, let's create it, klugy style!
       if (!found_accessory)
       {
         this.log.debug("Adding accessory ", displayName, " to list");
@@ -140,7 +126,25 @@ VKS_Platform.prototype.add_traps_callback = function(error, response, body)
 
         this.accessories.push(newAccessory);
         this.api.registerPlatformAccessories("homebridge-victor-smart-kill", "VictorSmartKill", [newAccessory]);
+        accessory = newAccessory;
       }
+
+      // set the kill status
+      if (kills_present > 0)
+      {
+        accessory.getService(Service.MotionSensor)
+          .getCharacteristic(Characteristic.MotionDetected)
+          .setValue(true);
+        this.log(displayName + ": kills present = " + kills_present);
+      }
+      else if (kills_present <= 0)
+      {
+        accessory.getService(Service.MotionSensor)
+          .getCharacteristic(Characteristic.MotionDetected)
+          .setValue(false);
+        this.log(displayName + ": no kills present");
+      }
+ 
     }
   }
   else{
